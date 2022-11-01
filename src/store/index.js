@@ -7,6 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     allData: [],
+    user_email: '',
+    user_password: '',
   },
   getters: {
     // allData:(state) => state.allData
@@ -26,6 +28,20 @@ export default new Vuex.Store({
     set_data(state, questions) {
       state.allData = questions
     },
+    register(state, form) {
+      state.user_email = form.email
+      state.user_password = form.password
+      alert('Register done')
+    },
+    login(state, form){
+      state.user_email = form.email
+      state.user_password = form.password
+      alert('Logged in')
+    }, 
+    logout(state){
+      state.user_email = ''
+      alert('Logged out')
+    }, 
   },
   actions: {
     async fetchQuestions(state) {
@@ -40,7 +56,7 @@ export default new Vuex.Store({
     },
     async getData(state) {
       await axios
-        .get("https://the-trivia-api.com/api/questions?categories=sport_and_leisure&limit=20&region=MM&difficulty=medium&tags=football")
+        .get("https://the-trivia-api.com/api/questions?limit=20")
         .then((response) => {
           state.commit('set_data', response.data)
         })

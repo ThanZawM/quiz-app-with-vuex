@@ -1,6 +1,7 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
+    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
+    <Login />
     <!-- <h3>{{allData}}</h3> -->
 
     <div v-if="!(index == allData.length)">
@@ -79,8 +80,12 @@
 </template>
 
 <script>
+import Login from "@/components/Login.vue";
 export default {
   name: "HomeView",
+  components: {
+    Login,
+  },
   data() {
     return {
       index: 0,
@@ -117,6 +122,12 @@ export default {
     allData() {
       let self = this;
       return self.$store.getters.allData;
+    },
+    user_email() {
+      return self.$store.getters.user_email;
+    },
+    user_password() {
+      return self.$store.getters.user_password;
     },
   },
   methods: {
@@ -184,7 +195,7 @@ export default {
         self.bgcolor2 = "";
         self.bgcolor3 = "";
         self.bgcolor4 = "";
-      }, 1200);
+      }, 1300);
     },
     reset() {
       let self = this;
