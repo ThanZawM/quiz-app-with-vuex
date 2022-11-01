@@ -1,9 +1,10 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
+    <!-- <h3>{{allData}}</h3> -->
 
     <div v-if="!(index == allData.length)">
-      <h1>{{ allData[index].question }}</h1>
+      <h1 :class="status">{{ allData[index].question }}</h1>
       <br /><br />
       <v-row>
         <v-col cols="1"></v-col>
@@ -11,21 +12,25 @@
           <v-btn
             x-large
             width="100%"
-            @click="checkAnswer(allData[index].correctAnswer)"
-            :color="backcolor"
-            class="white--text"
+            @click="checkAnswer(allData[index].answers[0], 0)"
+            :class="bgcolor1"
+            id="btn1"
+            ref="btn1"
           >
             <!-- :style="ans == true ? [trueStyles] : [falseStyles]" -->
-            <h2>{{ allData[index].correctAnswer }}</h2>
+            <h2>{{ allData[index].answers[0] }}</h2>
           </v-btn>
         </v-col>
         <v-col cols="5">
           <v-btn
             x-large
             width="100%"
-            @click="checkAnswer(allData[index].incorrectAnswers[0])"
+            @click="checkAnswer(allData[index].answers[1], 1)"
+            :class="bgcolor2"
+            id="btn2"
+            ref="btn2"
           >
-            <h2>{{ allData[index].incorrectAnswers[0] }}</h2>
+            <h2>{{ allData[index].answers[1] }}</h2>
           </v-btn>
         </v-col>
         <v-col cols="1"></v-col>
@@ -34,27 +39,37 @@
           <v-btn
             x-large
             width="100%"
-            @click="checkAnswer(allData[index].incorrectAnswers[1])"
+            @click="checkAnswer(allData[index].answers[2], 2)"
+            :class="bgcolor3"
+            id="btn3"
+            ref="btn3"
           >
-            <h2>{{ allData[index].incorrectAnswers[1] }}</h2>
+            <h2>{{ allData[index].answers[2] }}</h2>
           </v-btn>
         </v-col>
         <v-col cols="5">
           <v-btn
             x-large
             width="100%"
-            @click="checkAnswer(allData[index].incorrectAnswers[2])"
+            @click="checkAnswer(allData[index].answers[3], 3)"
+            :class="bgcolor4"
+            id="btn4"
+            ref="btn4"
           >
-            <h2>{{ allData[index].incorrectAnswers[2] }}</h2>
+            <h2>{{ allData[index].answers[3] }}</h2>
           </v-btn>
         </v-col>
         <v-col cols="1"></v-col>
       </v-row>
+      <br /><br />
+      <!-- <v-btn x-large outlined @click="next">
+        <h2>NEXT</h2>
+      </v-btn> -->
     </div>
 
     <div v-else>
       <!-- <v-text-field label="Total" placeholder="Placeholder" outlined disabled v-model="point"></v-text-field> -->
-      <h2>Total Scores: {{ point }} / {{ allData.length }}</h2>
+      <h2 :class="status">Total Scores: {{ point }} / {{ allData.length }}</h2>
       <br /><br />
       <v-btn x-large outlined @click="reset">
         <h2>Reset</h2>
@@ -69,9 +84,10 @@ export default {
   data() {
     return {
       index: 0,
-      quiz: {},
+      ansIndex: 0,
       point: 0,
       ans: null,
+      status: "col",
       baseStyles: {
         background: "grey",
         color: "white",
@@ -84,7 +100,14 @@ export default {
         background: "red",
         color: "white",
       },
-      backcolor: "",
+      trueColor: "",
+      falseColor: "",
+      ansTrue: "ansTrue",
+      ansFalse: "ansFalse",
+      bgcolor1: "",
+      bgcolor2: "",
+      bgcolor3: "",
+      bgcolor4: "",
     };
   },
   mounted() {
@@ -97,51 +120,116 @@ export default {
     },
   },
   methods: {
-    checkAnswer(value) {
+    checkAnswer(value, btn) {
       let self = this;
       if (value == self.allData[self.index].correctAnswer) {
         self.point += 1;
-        self.ans = true;
-        self.backcolor = "green";
-        // console.log(self.point, "", self.ans);
+        switch (btn) {
+          case 0:
+            self.bgcolor1 = "btntrue";
+            break;
+          case 1:
+            self.bgcolor2 = "btntrue";
+            break;
+          case 2:
+            self.bgcolor3 = "btntrue";
+            break;
+          case 3:
+            self.bgcolor4 = "btntrue";
+            break;
+        }
       } else {
-        self.ans = false;
-        self.backcolor = "red";
+        switch (btn) {
+          case 0:
+            self.bgcolor1 = "btnfalse";
+            break;
+          case 1:
+            self.bgcolor2 = "btnfalse";
+            break;
+          case 2:
+            self.bgcolor3 = "btnfalse";
+            break;
+          case 3:
+            self.bgcolor4 = "btnfalse";
+            break;
+        }
+
+        let ansid = -1;
+        for (let val of this.allData[self.index].answers) {
+          ansid++;
+          if (val == this.allData[self.index].correctAnswer) {
+            console.log(ansid, val);
+
+            switch (ansid) {
+              case 0:
+                self.bgcolor1 = "btntrue";
+                break;
+              case 1:
+                self.bgcolor2 = "btntrue";
+                break;
+              case 2:
+                self.bgcolor3 = "btntrue";
+                break;
+              case 3:
+                self.bgcolor4 = "btntrue";
+                break;
+            }
+          }
+        }
       }
-      // self.index++;
-      if (self.allData.length == self.index) {
-        console.log("Total", self.point);
-      }
+
+      setTimeout(() => {
+        self.index++;
+        self.bgcolor1 = "";
+        self.bgcolor2 = "";
+        self.bgcolor3 = "";
+        self.bgcolor4 = "";
+      }, 1200);
     },
     reset() {
       let self = this;
       self.index = 0;
       self.point = 0;
-      self.ans = false;
+    },
+    next() {
+      let self = this;
+      self.index++;
+    },
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-.text-danger {
-  color: red;
-}
 .ansTrue {
-  background: green;
-  color: white;
+  background: green !important;
+  color: white !important;
 }
 
 .ansFalse {
-  background: red;
-  color: white;
-}
-.bgblue {
-  background: blueviolet;
-  color: white;
+  background: red !important;
+  color: white !important;
 }
 
 h2 {
   text-transform: capitalize;
+}
+
+.btntrue {
+  background: green !important;
+  color: white !important;
+}
+
+.btnfalse {
+  background: red !important;
+  color: white !important;
+}
+.col {
+  color: lightseagreen;
 }
 </style>
