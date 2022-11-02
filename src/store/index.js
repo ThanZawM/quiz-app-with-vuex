@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import router from '@/router'
 
 Vue.use(Vuex)
 
@@ -9,6 +10,7 @@ export default new Vuex.Store({
     allData: [],
     user_email: '',
     user_password: '',
+    isLogin: false,
   },
   getters: {
     // allData:(state) => state.allData
@@ -29,19 +31,32 @@ export default new Vuex.Store({
       state.allData = questions
     },
     register(state, form) {
-      state.user_email = form.email
-      state.user_password = form.password
-      alert('Register done')
+      if (form.email == '' && form.password == '') {
+        alert('Refill user name and password!')
+      } else {
+        state.user_email = form.email
+        state.user_password = form.password
+        alert('Register done')
+        router.push('/')
+      }
+
     },
-    login(state, form){
-      state.user_email = form.email
-      state.user_password = form.password
-      alert('Logged in')
-    }, 
-    logout(state){
-      state.user_email = ''
+    login(state, form) {
+      if (state.user_email == '' && state.user_password == '') {
+        alert('Please register first!')
+        router.push("/register")
+      } else if (state.user_email == form.email && state.user_password == form.password) {
+        alert('Logged in')
+        state.isLogin = true
+      } else {
+        alert('User name or password is wrong!')
+      }
+
+    },
+    logout(state) {
       alert('Logged out')
-    }, 
+      state.isLogin = false
+    },
   },
   actions: {
     async fetchQuestions(state) {

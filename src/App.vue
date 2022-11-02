@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <v-app>
-      <nav>
-        <router-link to="/">Home</router-link> |
-        <router-link to="/about">About</router-link>
+      <Login v-if="!$store.state.isLogin && $route.name == 'home'" />
+      <nav v-if="$store.state.isLogin">
+        <router-link to="/">Home</router-link>
       </nav>
       <v-main>
         <router-view />
@@ -11,6 +11,15 @@
     </v-app>
   </div>
 </template>
+
+<script>
+import Login from "@/components/Login.vue";
+export default {
+  components: {
+    Login,
+  },
+};
+</script>
 
 <style>
 #app {

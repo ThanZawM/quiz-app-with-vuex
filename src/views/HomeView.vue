@@ -1,9 +1,8 @@
 <template>
-  <div class="home">
+  <div class="home" v-if="$store.state.isLogin">
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <Login />
+    <v-btn @click.prevent="logout" color="red" outlined class="mb-10">Logout</v-btn>
     <!-- <h3>{{allData}}</h3> -->
-
     <div v-if="!(index == allData.length)">
       <h1 :class="status">{{ allData[index].question }}</h1>
       <br /><br />
@@ -201,6 +200,9 @@ export default {
       let self = this;
       self.index = 0;
       self.point = 0;
+    },
+    logout(){
+      this.$store.commit('logout')
     },
     next() {
       let self = this;
